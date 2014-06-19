@@ -1,0 +1,55 @@
+  n= 19622 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 19622 14042 A (0.28 0.19 0.17 0.16 0.18)  
+   2) roll_belt< 130.5 17977 12411 A (0.31 0.21 0.19 0.18 0.11)  
+     4) pitch_forearm< -33.95 1578    10 A (0.99 0.0063 0 0 0) *
+     5) pitch_forearm>=-33.95 16399 12401 A (0.24 0.23 0.21 0.2 0.12)  
+      10) magnet_dumbbell_y< 439.5 13870  9953 A (0.28 0.18 0.24 0.19 0.11)  
+        20) roll_forearm< 123.5 8643  5131 A (0.41 0.18 0.18 0.17 0.061) *
+        21) roll_forearm>=123.5 5227  3500 C (0.077 0.18 0.33 0.23 0.18) *
+      11) magnet_dumbbell_y>=439.5 2529  1243 B (0.032 0.51 0.043 0.22 0.19) *
+   3) roll_belt>=130.5 1645    14 E (0.0085 0 0 0 0.99) *
+Confusion Matrix and Statistics
+
+          Reference
+Prediction    A    B    C    D    E
+         A 5080   81  405    0   14
+         B 1581 1286  930    0    0
+         C 1587  108 1727    0    0
+         D 1449  568 1199    0    0
+         E  524  486  966    0 1631
+
+Overall Statistics
+                                          
+               Accuracy : 0.4956          
+                 95% CI : (0.4885, 0.5026)
+    No Information Rate : 0.5209          
+    P-Value [Acc > NIR] : 1               
+                                          
+                  Kappa : 0.3407          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.4970  0.50850  0.33040       NA  0.99149
+Specificity            0.9468  0.85310  0.88225   0.8361  0.89008
+Pos Pred Value         0.9104  0.33869  0.50468       NA  0.45218
+Neg Pred Value         0.6339  0.92145  0.78395       NA  0.99913
+Prevalence             0.5209  0.12889  0.26638   0.0000  0.08383
+Detection Rate         0.2589  0.06554  0.08801   0.0000  0.08312
+Detection Prevalence   0.2844  0.19351  0.17440   0.1639  0.18382
+Balanced Accuracy      0.7219  0.68080  0.60633       NA  0.94079
+> 
+
+Number of training samples: 19622 
+Number of test samples:     0 
+
+rpart : 20 unknown predictions were added
+
+ [1] C A C A A C C A A A C C C A C A A A A C
+Levels: A B C D E
+
