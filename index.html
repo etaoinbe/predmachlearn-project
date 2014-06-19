@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Title</title>
+<title>predmachlearn project</title>
 
 <style type="text/css">
 body, td {
@@ -179,41 +179,21 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Title</h1>
+<h1>predmachlearn project</h1>
 
-<h1>What you should submit</h1>
+<h1><a href="http://etaoinbe.github.io/predmachlearn-project/">http://etaoinbe.github.io/predmachlearn-project/</a></h1>
 
-<h1>The goal of your project is to predict the manner in which they did the exercise. This is the &ldquo;classe&rdquo; variable</h1>
+<p>First attempt at machine learning was with a decision tree approach. The first tree that came out depended only on X. 
+However the predict function didnt like it. When I looked at X I saw it was like a sequence no with no real predicting value. 
+In the end I removed several more variables amongst which the columns that are all NA. </p>
 
-<h1>in the training set. You may use any of the other variables to predict with. You should create a report describing</h1>
+<p>What tripped me up for quite some time is that read.csv converts incomplete
+numeric fields to factors. This gave memory errors and general instability in R.</p>
 
-<h1>how you built your model, how you used cross validation, what you think the expected out of sample error is, and why</h1>
-
-<h1>you made the choices you did. You will also use your prediction model to predict 20 different test cases.</h1>
-
-<h1>1. Your submission should consist of a link to a Github repo with your R markdown and compiled HTML file describing</h1>
-
-<h1>your analysis. Please constrain the text of the writeup to &lt; 2000 words and the number of figures to be less than 5.</h1>
-
-<h1>It will make it easier for the graders if you submit a repo with a gh-pages branch so the HTML page can be viewed</h1>
-
-<h1>online (and you always want to make it easy on graders :-).</h1>
-
-<h1>2. You should also apply your machine learning algorithm to the 20 test cases available in the test data above.</h1>
-
-<h1>Please submit your predictions in appropriate format to the programming assignment for automated grading.</h1>
-
-<h1>See the programming assignment for additional details.</h1>
-
-<h1>Reproducibility</h1>
-
-<h1>Due to security concerns with the exchange of R code, your code will not be run during the evaluation by your</h1>
-
-<h1>classmates. Please be sure that if they download the repo, they will be able to view the compiled HTML version of your</h1>
-
-<h1>analysis.</h1>
-
-<h1>C:\data\git\predmachlearn-project</h1>
+<p>Then I finally got some results. However accuracy was really bad only like 40%. 
+So I decided to go for random forest next. I first tried to run it on the full training set but this never ended. 
+So in the end I reduced the set to 3000 records, this claimed 100% accuracy. 
+Apparently that is close to the truth as the submission page accepted all the results. </p>
 
 <pre><code class="r">library(caret)
 </code></pre>
@@ -232,8 +212,9 @@ hljs.initHighlightingOnLoad();
 
 <pre><code class="r">#http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf
 
-#testmethod=&quot;rf&quot;
-testmethod=&quot;rpart&quot; 
+#
+testmethod=&quot;rf&quot;
+#testmethod=&quot;rpart&quot; 
 
 #####################
 # TRAINING
@@ -244,238 +225,74 @@ setwd(&quot;C:\\data\\lectures\\predmachlearn\\project&quot;)
 #xx  &lt;- read.csv(&quot;pml-training.csv&quot;,as.is=T,stringsAsFactors=F)
 
 training &lt;- read.csv(&quot;pml-training.csv&quot;,as.is=T,stringsAsFactors=F)
+table(training$classe)
+</code></pre>
 
-ns=names(training)
+<pre><code>## 
+##    A    B    C    D    E 
+## 5580 3797 3422 3216 3607
+</code></pre>
+
+<pre><code class="r">plot(table(training$classe))
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAdVBMVEX9/v0AAAAAADkAAGUAOTkAOY8AZrU5AAA5ADk5AGU5OY85ZrU5j9plAABlADllAGVlOY9lZmVlZrVltf2POQCPOTmPOWWP27WP29qP2/21ZgC1ZmW1/rW1/v3ajzna24/a/rXa/v39tWX924/9/rX9/tr9/v2c5aXLAAAAJ3RSTlP//////////////////////////////////////////////////wCDVpfZAAAACXBIWXMAAAsSAAALEgHS3X78AAAKWklEQVR4nO2di1bbNgBAGzbSlvHoBnQLHWnJ6/8/cX5ASoZjR7FUIt17T097ttIryq1syST2h40g+fDen4C8D4aHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCjxwk8m0VSSHsNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPJTh8MuPk5rfHgc+zvBZMRh+fXfb/Lo4f+r/QMNnxWD41c3jzq97MXxWOOOhDJ/jV1ee4wvEVT0Uw0NxOwfFxR0Ut3NQnPFQ3M5BcVUP5Zjwkxf+93/jfEbySxiznTN8xoxZ3Bk+Y8Zs5wyfMc54KGO2c4bPmDHbOcNnjOGhHLS4q4/2HVdsDZ8xh4RvFvTLP978luEz5pDwy4snt3OlMRz+6uyfr/WMv3A7VxIHLO7Wd5PpZuF2rixc1UMxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwU71cPxbtXQ/F+9VCc8VC8Xz0UV/VQDA/F7RwUF3dQ3M5BccZDcTsHxVU9FJ8mDcXtHBQXd1DczkFxxkNxOwfF7RwUw0M5MPzy89sjveFz5oBnyz5frXl7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" alt="plot of chunk unnamed-chunk-1"/> </p>
+
+<pre><code class="r">ns=names(training)
 for(i in 1:length(ns)) { 
   name=ns[i] 
   if(  name!=&quot;classe&quot;) { 
-    if( typeof(training[,name])==&quot;character&quot;  ) { cat(&quot;!!!&quot;,name);
+    if( typeof(training[,name])==&quot;character&quot;  ) {  
                                                    training[, c(name)]=as.numeric( training[, c(name)] )  ;
     }
     #print(sprintf(&quot;types tr %s    name %s &quot;,typeof(training[, c(name)]), name ) )
   }}
 </code></pre>
 
-<pre><code>## !!! user_name
-</code></pre>
-
 <pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! cvtd_timestamp
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! new_window
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_roll_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_picth_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_yaw_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_roll_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_roll_belt.1
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_yaw_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! max_yaw_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! min_yaw_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! amplitude_yaw_belt
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_roll_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_picth_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_yaw_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_roll_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_pitch_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_yaw_arm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_roll_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_picth_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_yaw_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_roll_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_pitch_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_yaw_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! max_yaw_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! min_yaw_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! amplitude_yaw_dumbbell
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_roll_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_picth_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! kurtosis_yaw_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_roll_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_pitch_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! skewness_yaw_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! max_yaw_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! min_yaw_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## !!! amplitude_yaw_forearm
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
 </code></pre>
 
 <pre><code class="r">training$classe=as.factor(training$classe)
 
 #training&lt;- training[ sample(dim(training)[1], 100), ] #!!!
 </code></pre>
+
+<p>See how the dataset is boobytrapped.</p>
 
 <pre><code class="r">qplot(seq_along(training$classe),training$classe)
 </code></pre>
@@ -502,83 +319,56 @@ if(testmethod==&quot;rpart&quot;) {
   set.seed(975)
   modfit=train(training$classe ~ ., method=&quot;rpart&quot;, data=training )
   print(modfit$finalModel)
-  jpeg(&quot;modfittree.jpg&quot;)
   plot(modfit$finalModel,uniform=TRUE,main=&quot;tree&quot;)
   text(modfit$finalModel,use.n=TRUE,all=TRUE,cex=.8)
-  dev.off()
-  jpeg(&quot;fancytree.jpeg&quot;)
-  fancyRpartPlot(modfit$finalModel)
-  dev.off()
-
+  fancyRpartPlot(modfit$finalModel)  
   confusionMatrix(training$classe, predict(modfit, training))
 }
+
+### 
 </code></pre>
 
-<pre><code>## Loading required package: rpart
-</code></pre>
-
-<pre><code>## n= 19622 
-## 
-## node), split, n, loss, yval, (yprob)
-##       * denotes terminal node
-## 
-##  1) root 19622 14040 A (0.28 0.19 0.17 0.16 0.18)  
-##    2) roll_belt&lt; 130.5 17977 12410 A (0.31 0.21 0.19 0.18 0.11)  
-##      4) pitch_forearm&lt; -33.95 1578    10 A (0.99 0.0063 0 0 0) *
-##      5) pitch_forearm&gt;=-33.95 16399 12400 A (0.24 0.23 0.21 0.2 0.12)  
-##       10) magnet_dumbbell_y&lt; 439.5 13870  9953 A (0.28 0.18 0.24 0.19 0.11)  
-##         20) roll_forearm&lt; 123.5 8643  5131 A (0.41 0.18 0.18 0.17 0.061) *
-##         21) roll_forearm&gt;=123.5 5227  3500 C (0.077 0.18 0.33 0.23 0.18) *
-##       11) magnet_dumbbell_y&gt;=439.5 2529  1243 B (0.032 0.51 0.043 0.22 0.19) *
-##    3) roll_belt&gt;=130.5 1645    14 E (0.0085 0 0 0 0.99) *
-</code></pre>
-
-<pre><code>## Loading required package: rpart.plot
-## Loading required package: RColorBrewer
-</code></pre>
-
-<pre><code>## Confusion Matrix and Statistics
-## 
-##           Reference
-## Prediction    A    B    C    D    E
-##          A 5080   81  405    0   14
-##          B 1581 1286  930    0    0
-##          C 1587  108 1727    0    0
-##          D 1449  568 1199    0    0
-##          E  524  486  966    0 1631
-## 
-## Overall Statistics
-##                                         
-##                Accuracy : 0.496         
-##                  95% CI : (0.489, 0.503)
-##     No Information Rate : 0.521         
-##     P-Value [Acc &gt; NIR] : 1             
-##                                         
-##                   Kappa : 0.341         
-##  Mcnemar&#39;s Test P-Value : NA            
-## 
-## Statistics by Class:
-## 
-##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity             0.497   0.5085    0.330       NA   0.9915
-## Specificity             0.947   0.8531    0.882    0.836   0.8901
-## Pos Pred Value          0.910   0.3387    0.505       NA   0.4522
-## Neg Pred Value          0.634   0.9215    0.784       NA   0.9991
-## Prevalence              0.521   0.1289    0.266    0.000   0.0838
-## Detection Rate          0.259   0.0655    0.088    0.000   0.0831
-## Detection Prevalence    0.284   0.1935    0.174    0.164   0.1838
-## Balanced Accuracy       0.722   0.6808    0.606       NA   0.9408
-</code></pre>
-
-<pre><code class="r">### 
-if(testmethod==&quot;rf&quot;) {  
-#
-  training&lt;- training[ sample(dim(training)[1], 100), ] #!!!
+<pre><code class="r">if(testmethod==&quot;rf&quot;) {  
+#  training&lt;- training[ sample(dim(training)[1], 100), ] #!!!
   modfitrf=train(training$classe ~ ., method=&quot;rf&quot;, data=training, prox=TRUE )
   confusionMatrix(training$classe, predict(modfitrf, training))
 }
+</code></pre>
 
-#####################
+<pre><code>  Confusion Matrix and Statistics
+
+            Reference
+  Prediction   A   B   C   D   E
+           A 820   0   0   0   0
+           B   0 590   0   0   0
+           C   0   0 521   0   0
+           D   0   0   0 510   0
+           E   0   0   0   0 559
+
+  Overall Statistics
+
+                 Accuracy : 1          
+                   95% CI : (0.9988, 1)
+      No Information Rate : 0.2733     
+      P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+
+                    Kappa : 1          
+   Mcnemar&#39;s Test P-Value : NA         
+
+  Statistics by Class:
+
+                       Class: A Class: B Class: C Class: D Class: E
+  Sensitivity            1.0000   1.0000   1.0000     1.00   1.0000
+  Specificity            1.0000   1.0000   1.0000     1.00   1.0000
+  Pos Pred Value         1.0000   1.0000   1.0000     1.00   1.0000
+  Neg Pred Value         1.0000   1.0000   1.0000     1.00   1.0000
+  Prevalence             0.2733   0.1967   0.1737     0.17   0.1863
+  Detection Rate         0.2733   0.1967   0.1737     0.17   0.1863
+  Detection Prevalence   0.2733   0.1967   0.1737     0.17   0.1863
+  Balanced Accuracy      1.0000   1.0000   1.0000     1.00   1.0000
+</code></pre>
+
+<pre><code class="r">#####################
 # TESTING
 #####################
 testing &lt;- read.csv(&quot;pml-testing.csv&quot;,as.is=T,stringsAsFactors=F)
@@ -586,191 +376,16 @@ ns=names(testing)
 for(i in 1:length(ns)) { 
   name=ns[i] 
   if(  name!=&quot;classe&quot;) { 
-    if( typeof(testing[,name])==&quot;character&quot;  ) { cat(&quot;!!!&quot;,name);
+    if( typeof(testing[,name])==&quot;character&quot;  ) { 
                                                   testing[, c(name)]=as.numeric( testing[, c(name)] )  ;
     }
-    print(sprintf(&quot;types tr %s    name %s &quot;,typeof(testing[, c(name)]), name ) )
+#    print(sprintf(&quot;types tr %s    name %s &quot;,typeof(testing[, c(name)]), name ) )
   }}
 </code></pre>
 
-<pre><code>## [1] &quot;types tr integer    name X &quot;
-## !!! user_name
-</code></pre>
-
 <pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## [1] &quot;types tr double    name user_name &quot;
-## [1] &quot;types tr integer    name raw_timestamp_part_1 &quot;
-## [1] &quot;types tr integer    name raw_timestamp_part_2 &quot;
-## !!! cvtd_timestamp
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## [1] &quot;types tr double    name cvtd_timestamp &quot;
-## !!! new_window
-</code></pre>
-
-<pre><code>## Warning: NAs introduced by coercion
-</code></pre>
-
-<pre><code>## [1] &quot;types tr double    name new_window &quot;
-## [1] &quot;types tr integer    name num_window &quot;
-## [1] &quot;types tr double    name roll_belt &quot;
-## [1] &quot;types tr double    name pitch_belt &quot;
-## [1] &quot;types tr double    name yaw_belt &quot;
-## [1] &quot;types tr integer    name total_accel_belt &quot;
-## [1] &quot;types tr logical    name kurtosis_roll_belt &quot;
-## [1] &quot;types tr logical    name kurtosis_picth_belt &quot;
-## [1] &quot;types tr logical    name kurtosis_yaw_belt &quot;
-## [1] &quot;types tr logical    name skewness_roll_belt &quot;
-## [1] &quot;types tr logical    name skewness_roll_belt.1 &quot;
-## [1] &quot;types tr logical    name skewness_yaw_belt &quot;
-## [1] &quot;types tr logical    name max_roll_belt &quot;
-## [1] &quot;types tr logical    name max_picth_belt &quot;
-## [1] &quot;types tr logical    name max_yaw_belt &quot;
-## [1] &quot;types tr logical    name min_roll_belt &quot;
-## [1] &quot;types tr logical    name min_pitch_belt &quot;
-## [1] &quot;types tr logical    name min_yaw_belt &quot;
-## [1] &quot;types tr logical    name amplitude_roll_belt &quot;
-## [1] &quot;types tr logical    name amplitude_pitch_belt &quot;
-## [1] &quot;types tr logical    name amplitude_yaw_belt &quot;
-## [1] &quot;types tr logical    name var_total_accel_belt &quot;
-## [1] &quot;types tr logical    name avg_roll_belt &quot;
-## [1] &quot;types tr logical    name stddev_roll_belt &quot;
-## [1] &quot;types tr logical    name var_roll_belt &quot;
-## [1] &quot;types tr logical    name avg_pitch_belt &quot;
-## [1] &quot;types tr logical    name stddev_pitch_belt &quot;
-## [1] &quot;types tr logical    name var_pitch_belt &quot;
-## [1] &quot;types tr logical    name avg_yaw_belt &quot;
-## [1] &quot;types tr logical    name stddev_yaw_belt &quot;
-## [1] &quot;types tr logical    name var_yaw_belt &quot;
-## [1] &quot;types tr double    name gyros_belt_x &quot;
-## [1] &quot;types tr double    name gyros_belt_y &quot;
-## [1] &quot;types tr double    name gyros_belt_z &quot;
-## [1] &quot;types tr integer    name accel_belt_x &quot;
-## [1] &quot;types tr integer    name accel_belt_y &quot;
-## [1] &quot;types tr integer    name accel_belt_z &quot;
-## [1] &quot;types tr integer    name magnet_belt_x &quot;
-## [1] &quot;types tr integer    name magnet_belt_y &quot;
-## [1] &quot;types tr integer    name magnet_belt_z &quot;
-## [1] &quot;types tr double    name roll_arm &quot;
-## [1] &quot;types tr double    name pitch_arm &quot;
-## [1] &quot;types tr double    name yaw_arm &quot;
-## [1] &quot;types tr integer    name total_accel_arm &quot;
-## [1] &quot;types tr logical    name var_accel_arm &quot;
-## [1] &quot;types tr logical    name avg_roll_arm &quot;
-## [1] &quot;types tr logical    name stddev_roll_arm &quot;
-## [1] &quot;types tr logical    name var_roll_arm &quot;
-## [1] &quot;types tr logical    name avg_pitch_arm &quot;
-## [1] &quot;types tr logical    name stddev_pitch_arm &quot;
-## [1] &quot;types tr logical    name var_pitch_arm &quot;
-## [1] &quot;types tr logical    name avg_yaw_arm &quot;
-## [1] &quot;types tr logical    name stddev_yaw_arm &quot;
-## [1] &quot;types tr logical    name var_yaw_arm &quot;
-## [1] &quot;types tr double    name gyros_arm_x &quot;
-## [1] &quot;types tr double    name gyros_arm_y &quot;
-## [1] &quot;types tr double    name gyros_arm_z &quot;
-## [1] &quot;types tr integer    name accel_arm_x &quot;
-## [1] &quot;types tr integer    name accel_arm_y &quot;
-## [1] &quot;types tr integer    name accel_arm_z &quot;
-## [1] &quot;types tr integer    name magnet_arm_x &quot;
-## [1] &quot;types tr integer    name magnet_arm_y &quot;
-## [1] &quot;types tr integer    name magnet_arm_z &quot;
-## [1] &quot;types tr logical    name kurtosis_roll_arm &quot;
-## [1] &quot;types tr logical    name kurtosis_picth_arm &quot;
-## [1] &quot;types tr logical    name kurtosis_yaw_arm &quot;
-## [1] &quot;types tr logical    name skewness_roll_arm &quot;
-## [1] &quot;types tr logical    name skewness_pitch_arm &quot;
-## [1] &quot;types tr logical    name skewness_yaw_arm &quot;
-## [1] &quot;types tr logical    name max_roll_arm &quot;
-## [1] &quot;types tr logical    name max_picth_arm &quot;
-## [1] &quot;types tr logical    name max_yaw_arm &quot;
-## [1] &quot;types tr logical    name min_roll_arm &quot;
-## [1] &quot;types tr logical    name min_pitch_arm &quot;
-## [1] &quot;types tr logical    name min_yaw_arm &quot;
-## [1] &quot;types tr logical    name amplitude_roll_arm &quot;
-## [1] &quot;types tr logical    name amplitude_pitch_arm &quot;
-## [1] &quot;types tr logical    name amplitude_yaw_arm &quot;
-## [1] &quot;types tr double    name roll_dumbbell &quot;
-## [1] &quot;types tr double    name pitch_dumbbell &quot;
-## [1] &quot;types tr double    name yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name kurtosis_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name kurtosis_picth_dumbbell &quot;
-## [1] &quot;types tr logical    name kurtosis_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name skewness_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name skewness_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name skewness_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name max_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name max_picth_dumbbell &quot;
-## [1] &quot;types tr logical    name max_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name min_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name min_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name min_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name amplitude_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name amplitude_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name amplitude_yaw_dumbbell &quot;
-## [1] &quot;types tr integer    name total_accel_dumbbell &quot;
-## [1] &quot;types tr logical    name var_accel_dumbbell &quot;
-## [1] &quot;types tr logical    name avg_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name stddev_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name var_roll_dumbbell &quot;
-## [1] &quot;types tr logical    name avg_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name stddev_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name var_pitch_dumbbell &quot;
-## [1] &quot;types tr logical    name avg_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name stddev_yaw_dumbbell &quot;
-## [1] &quot;types tr logical    name var_yaw_dumbbell &quot;
-## [1] &quot;types tr double    name gyros_dumbbell_x &quot;
-## [1] &quot;types tr double    name gyros_dumbbell_y &quot;
-## [1] &quot;types tr double    name gyros_dumbbell_z &quot;
-## [1] &quot;types tr integer    name accel_dumbbell_x &quot;
-## [1] &quot;types tr integer    name accel_dumbbell_y &quot;
-## [1] &quot;types tr integer    name accel_dumbbell_z &quot;
-## [1] &quot;types tr integer    name magnet_dumbbell_x &quot;
-## [1] &quot;types tr integer    name magnet_dumbbell_y &quot;
-## [1] &quot;types tr integer    name magnet_dumbbell_z &quot;
-## [1] &quot;types tr double    name roll_forearm &quot;
-## [1] &quot;types tr double    name pitch_forearm &quot;
-## [1] &quot;types tr double    name yaw_forearm &quot;
-## [1] &quot;types tr logical    name kurtosis_roll_forearm &quot;
-## [1] &quot;types tr logical    name kurtosis_picth_forearm &quot;
-## [1] &quot;types tr logical    name kurtosis_yaw_forearm &quot;
-## [1] &quot;types tr logical    name skewness_roll_forearm &quot;
-## [1] &quot;types tr logical    name skewness_pitch_forearm &quot;
-## [1] &quot;types tr logical    name skewness_yaw_forearm &quot;
-## [1] &quot;types tr logical    name max_roll_forearm &quot;
-## [1] &quot;types tr logical    name max_picth_forearm &quot;
-## [1] &quot;types tr logical    name max_yaw_forearm &quot;
-## [1] &quot;types tr logical    name min_roll_forearm &quot;
-## [1] &quot;types tr logical    name min_pitch_forearm &quot;
-## [1] &quot;types tr logical    name min_yaw_forearm &quot;
-## [1] &quot;types tr logical    name amplitude_roll_forearm &quot;
-## [1] &quot;types tr logical    name amplitude_pitch_forearm &quot;
-## [1] &quot;types tr logical    name amplitude_yaw_forearm &quot;
-## [1] &quot;types tr integer    name total_accel_forearm &quot;
-## [1] &quot;types tr logical    name var_accel_forearm &quot;
-## [1] &quot;types tr logical    name avg_roll_forearm &quot;
-## [1] &quot;types tr logical    name stddev_roll_forearm &quot;
-## [1] &quot;types tr logical    name var_roll_forearm &quot;
-## [1] &quot;types tr logical    name avg_pitch_forearm &quot;
-## [1] &quot;types tr logical    name stddev_pitch_forearm &quot;
-## [1] &quot;types tr logical    name var_pitch_forearm &quot;
-## [1] &quot;types tr logical    name avg_yaw_forearm &quot;
-## [1] &quot;types tr logical    name stddev_yaw_forearm &quot;
-## [1] &quot;types tr logical    name var_yaw_forearm &quot;
-## [1] &quot;types tr double    name gyros_forearm_x &quot;
-## [1] &quot;types tr double    name gyros_forearm_y &quot;
-## [1] &quot;types tr double    name gyros_forearm_z &quot;
-## [1] &quot;types tr integer    name accel_forearm_x &quot;
-## [1] &quot;types tr integer    name accel_forearm_y &quot;
-## [1] &quot;types tr integer    name accel_forearm_z &quot;
-## [1] &quot;types tr integer    name magnet_forearm_x &quot;
-## [1] &quot;types tr integer    name magnet_forearm_y &quot;
-## [1] &quot;types tr integer    name magnet_forearm_z &quot;
-## [1] &quot;types tr integer    name problem_id &quot;
+## Warning: NAs introduced by coercion
+## Warning: NAs introduced by coercion
 </code></pre>
 
 <pre><code class="r">#NAs2 &lt;- apply(testing,2,function(x) {sum(is.na(x))}) 
@@ -780,38 +395,23 @@ testing &lt;- testing[,which(NAs == 0)]
 removeIndex &lt;- grep(excludes,names(testing))
 #testing &lt;- subset( testing, select = removeIndex )
 testing &lt;- testing[,-removeIndex]
-table(training$classe)
-</code></pre>
-
-<pre><code>## 
-##    A    B    C    D    E 
-## 5580 3797 3422 3216 3607
-</code></pre>
-
-<pre><code class="r">plot(table(training$classe))
-</code></pre>
-
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAdVBMVEX9/v0AAAAAADkAAGUAOTkAOY8AZrU5AAA5ADk5AGU5OY85ZrU5j9plAABlADllAGVlOY9lZmVlZrVltf2POQCPOTmPOWWP27WP29qP2/21ZgC1ZmW1/rW1/v3ajzna24/a/rXa/v39tWX924/9/rX9/tr9/v2c5aXLAAAAJ3RSTlP//////////////////////////////////////////////////wCDVpfZAAAACXBIWXMAAAsSAAALEgHS3X78AAAKWklEQVR4nO2di1bbNgBAGzbSlvHoBnQLHWnJ6/8/cX5ASoZjR7FUIt17T097ttIryq1syST2h40g+fDen4C8D4aHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCiGh2J4KIaHYngohodieCjxwk8m0VSSHsNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPJTh8MuPk5rfHgc+zvBZMRh+fXfb/Lo4f+r/QMNnxWD41c3jzq97MXxWOOOhDJ/jV1ee4wvEVT0Uw0NxOwfFxR0Ut3NQnPFQ3M5BcVUP5Zjwkxf+93/jfEbySxiznTN8xoxZ3Bk+Y8Zs5wyfMc54KGO2c4bPmDHbOcNnjOGhHLS4q4/2HVdsDZ8xh4RvFvTLP978luEz5pDwy4snt3OlMRz+6uyfr/WMv3A7VxIHLO7Wd5PpZuF2rixc1UMxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwUw0MxPBTDQzE8FMNDMTwU71cPxbtXQ/F+9VCc8VC8Xz0UV/VQDA/F7RwUF3dQ3M5BccZDcTsHxVU9FJ8mDcXtHBQXd1DczkFxxkNxOwfF7RwUw0M5MPzy89sjveFz5oBnyz5frXl7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" alt="plot of chunk unnamed-chunk-4"/> </p>
-
-<pre><code class="r">if(testmethod==&quot;rpart&quot;) {
+if(testmethod==&quot;rpart&quot;) {
   predict(modfit, testing, verbose = TRUE)
 }
-</code></pre>
-
-<pre><code>## Number of training samples: 19622 
-## Number of test samples:     0 
-## 
-## rpart : 20 unknown predictions were added
-</code></pre>
-
-<pre><code>##  [1] C A C A A C C A A A C C C A C A A A A C
-## Levels: A B C D E
 </code></pre>
 
 <pre><code class="r">if(testmethod==&quot;rf&quot;) {
   predict(modfitrf, testing, verbose = TRUE)
 }
 </code></pre>
+
+<p>Number of training samples: 3000 
+Number of test samples:     0 </p>
+
+<p>rf : 20 unknown predictions were added</p>
+
+<p>[1] B A B A A E D B A A B C B A E E A B B B
+Levels: A B C D E</p>
 
 </body>
 
