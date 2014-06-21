@@ -32,24 +32,31 @@ testmethod="rf"
 # TRAINING
 #####################
 
-#setwd("C:\\data\\lectures\\predmachlearn\\project") 
-setwd("e:\\data-e\\project") 
+#
+setwd("C:\\data\\lectures\\predmachlearn\\project") 
+#setwd("e:\\data-e\\project") 
 
 #training <- read.csv("pml-training.csv")
 #xx  <- read.csv("pml-training.csv",as.is=T,stringsAsFactors=F)
 
-training <- read.csv("pml-training.csv",as.is=T,stringsAsFactors=F)
+pmlData <- read.csv("pml-training.csv",as.is=T,stringsAsFactors=F)
 
-ns=names(training)
+ns=names(pmlData)
 for(i in 1:length(ns)) { 
   name=ns[i] 
   if(  name!="classe") { 
-    if( typeof(training[,name])=="character"  ) { cat("!!!",name);
-                                                   training[, c(name)]=as.numeric( training[, c(name)] )  ;
+    if( typeof(pmlData[,name])=="character"  ) { cat("!!!",name);
+                                                 pmlData[, c(name)]=as.numeric( pmlData[, c(name)] )  ;
     }
-    #print(sprintf("types tr %s    name %s ",typeof(training[, c(name)]), name ) )
+    #print(sprintf("types tr %s    name %s ",typeof(pmlData[, c(name)]), name ) )
   }}
-training$classe=as.factor(training$classe)
+pmlData$classe=as.factor(pmlData$classe)
+
+inTrain = createDataPartition(pmlData$classe, p = .6)[[1]]
+training = pmlData[ inTrain,]
+validationset = pmlData[-inTrain,]
+dim(validationset)
+
 
 #training<- training[ sample(dim(training)[1], 100), ] #!!!
 
@@ -90,6 +97,20 @@ if(testmethod=="rf") {
   modfitrf=train(training$classe ~ ., method="rf", data=training, prox=TRUE )
   confusionMatrix(training$classe, predict(modfitrf, training))
 }
+
+##########################################
+# validation out of sample error 
+##########################################
+if(testmethod=="rpart") {
+  valp= predict(modfit, validationset, verbose = TRUE)
+  confusionMatrix(validationset$classe, valp)
+}
+if(testmethod=="rf") {
+  valp = predict(modfitrf, validationset, verbose = TRUE)
+  confusionMatrix(validationset$classe, valp)
+}
+
+
 
 #####################
 # TESTING
