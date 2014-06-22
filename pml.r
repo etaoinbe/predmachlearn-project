@@ -73,9 +73,9 @@ training <- training[,which(NAs == 0)]
 removeIndex <- grep(excludes, names(training))
 training <- training[,-removeIndex]
 
+set.seed(975)
 
 if(testmethod=="rpart") {
-  set.seed(975)
   modfit=train(training$classe ~ ., method="rpart", data=training )
   print(modfit$finalModel)
   jpeg("modfittree.jpg")
@@ -91,10 +91,13 @@ if(testmethod=="rpart") {
 
 ### 
 if(testmethod=="rf") {  
-#  training<- training[ sample(dim(training)[1], 100), ] #!!!
-  training<- training[ sample(dim(training)[1], 3000), ] #!!!
-
-  modfitrf=train(training$classe ~ ., method="rf", data=training, prox=TRUE )
+#
+  training<- training[ sample(dim(training)[1], 6000), ] #!!!
+  #training<- training[ sample(dim(training)[1], 3000), ] #!!!
+  #https://class.coursera.org/predmachlearn-002/forum/thread?thread_id=249#post-1024
+  trctrl=trainControl(method = "cv", number  = 5)
+  modfitrf=train(training$classe ~ ., method="rf", data=training, trControl = trctrl, prox=TRUE )
+  print(modfitrf$results)
   confusionMatrix(training$classe, predict(modfitrf, training))
 }
 
