@@ -192,9 +192,9 @@ numeric fields to factors. This gave memory errors and general instability in R.
 
 <p>Then I finally got some results. However accuracy was really bad only like 40%. 
 So I decided to go for random forest next. I first tried to run it on the full training set but this never ended. 
-So in the end I reduced the set to 3000 records, this claimed 100% accuracy. </p>
+So in the end I reduced the set to 6000 records, this claimed 100% accuracy. </p>
 
-<p>To find the out of sample error I set aside some data to use as validation set. </p>
+<p>Initially I used the validation set to do the out of sample estimation but after rereading the assignment I figured out that we need to estimate the out of sample error using cross validation. Both numbers are available below.</p>
 
 <pre><code class="r">library(caret)
 </code></pre>
@@ -291,7 +291,7 @@ validationset = pmlData[-inTrain,]
 <pre><code class="r">qplot(training$X,training$classe)
 </code></pre>
 
-<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-3"/> </p>
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-3"/> </p>
 
 <pre><code class="r">excludes=&quot;timestamp|X|user_name|new_window&quot;
 
@@ -318,43 +318,61 @@ if(testmethod==&quot;rpart&quot;) {
 </code></pre>
 
 <pre><code class="r">if(testmethod==&quot;rf&quot;) {  
-#  training&lt;- training[ sample(dim(training)[1], 100), ] #!!!
-  modfitrf=train(training$classe ~ ., method=&quot;rf&quot;, data=training, prox=TRUE )
+#
+  training&lt;- training[ sample(dim(training)[1], 6000), ] #!!!
+  #training&lt;- training[ sample(dim(training)[1], 3000), ] #!!!
+  #https://class.coursera.org/predmachlearn-002/forum/thread?thread_id=249#post-1024
+  trctrl=trainControl(method = &quot;cv&quot;, number  = 5)
+  modfitrf=train(training$classe ~ ., method=&quot;rf&quot;, data=training, trControl = trctrl, prox=TRUE )
+  print(modfitrf$results)
   confusionMatrix(training$classe, predict(modfitrf, training))
 }
 </code></pre>
 
-<pre><code>  Confusion Matrix and Statistics
+<pre><code> mtry  Accuracy     Kappa  AccuracySD     KappaSD
+1    2 0.9813322 0.9764069 0.003761296 0.004757671
+2   27 0.9879985 0.9848329 0.004553527 0.005754389
+3   53 0.9823305 0.9776679 0.008141845 0.010287161
+&gt; 
+  Confusion Matrix and Statistics
 
-            Reference
-  Prediction   A   B   C   D   E
-           A 820   0   0   0   0
-           B   0 590   0   0   0
-           C   0   0 521   0   0
-           D   0   0   0 510   0
-           E   0   0   0   0 559
+          Reference
+Prediction    A    B    C    D    E
+         A 1686    0    0    0    0
+         B    0 1156    0    0    0
+         C    0    0 1021    0    0
+         D    0    0    0 1027    0
+         E    0    0    0    0 1110
 
   Overall Statistics
 
-                 Accuracy : 1          
-                   95% CI : (0.9988, 1)
-      No Information Rate : 0.2733     
-      P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
 
-                    Kappa : 1          
-   Mcnemar&#39;s Test P-Value : NA         
+               Accuracy : 1          
+                 95% CI : (0.9994, 1)
+    No Information Rate : 0.281      
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
 
-  Statistics by Class:
+                  Kappa : 1          
+ Mcnemar&#39;s Test P-Value : NA         
 
-                       Class: A Class: B Class: C Class: D Class: E
-  Sensitivity            1.0000   1.0000   1.0000     1.00   1.0000
-  Specificity            1.0000   1.0000   1.0000     1.00   1.0000
-  Pos Pred Value         1.0000   1.0000   1.0000     1.00   1.0000
-  Neg Pred Value         1.0000   1.0000   1.0000     1.00   1.0000
-  Prevalence             0.2733   0.1967   0.1737     0.17   0.1863
-  Detection Rate         0.2733   0.1967   0.1737     0.17   0.1863
-  Detection Prevalence   0.2733   0.1967   0.1737     0.17   0.1863
-  Balanced Accuracy      1.0000   1.0000   1.0000     1.00   1.0000
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity             1.000   1.0000   1.0000   1.0000    1.000
+Specificity             1.000   1.0000   1.0000   1.0000    1.000
+Pos Pred Value          1.000   1.0000   1.0000   1.0000    1.000
+Neg Pred Value          1.000   1.0000   1.0000   1.0000    1.000
+Prevalence              0.281   0.1927   0.1702   0.1712    0.185
+Detection Rate          0.281   0.1927   0.1702   0.1712    0.185
+Detection Prevalence    0.281   0.1927   0.1702   0.1712    0.185
+Balanced Accuracy       1.000   1.0000   1.0000   1.0000    1.000
+&gt; 
+
+calculate out of sample error based on cross validation :
+
+&gt;  1-0.9813322
+[1] 0.0186678
+
 </code></pre>
 
 <p>predict with validation set to find the out of sample error.</p>
